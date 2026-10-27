@@ -258,7 +258,17 @@ func TestProxyForURL(t *testing.T) {
 	}
 }
 
+// clearLowerCaseProxyEnv clears the lowercase proxy variables, which
+// FromEnvironment prefers over the uppercase ones. Call it before setting
+// the uppercase variables: Windows treats variable names case-insensitively.
+func clearLowerCaseProxyEnv(t *testing.T) {
+	t.Setenv("http_proxy", "")
+	t.Setenv("https_proxy", "")
+	t.Setenv("no_proxy", "")
+}
+
 func TestFromEnvironment(t *testing.T) {
+	clearLowerCaseProxyEnv(t)
 	t.Setenv("HTTP_PROXY", "httpproxy")
 	t.Setenv("HTTPS_PROXY", "httpsproxy")
 	t.Setenv("NO_PROXY", "noproxy")
@@ -275,6 +285,7 @@ func TestFromEnvironment(t *testing.T) {
 }
 
 func TestFromEnvironmentWithRequestMethod(t *testing.T) {
+	clearLowerCaseProxyEnv(t)
 	t.Setenv("HTTP_PROXY", "httpproxy")
 	t.Setenv("HTTPS_PROXY", "httpsproxy")
 	t.Setenv("NO_PROXY", "noproxy")
